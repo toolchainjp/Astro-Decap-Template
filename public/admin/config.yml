@@ -1,0 +1,57 @@
+# Remove Comment for Local Dev
+# local_backend: true
+backend:
+  name: github
+  repo: your-github-username/your-repo-name
+  branch: main
+  # Cloudflare Pages uses a proxy for OAuth — update the base_url below
+  # after setting up the Cloudflare Pages GitHub integration
+  base_url: https://your-site.pages.dev
+
+# Publish mode: editorial_workflow enables draft/review/publish flow
+publish_mode: editorial_workflow
+
+# Media files stored in the repo
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: blog
+    label: Blog
+    folder: src/content/blog
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    fields:
+      - name: title
+        label: Title
+        widget: string
+
+      - name: description
+        label: Description
+        widget: text
+
+      - name: pubDate
+        label: Publish Date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+
+      - name: updatedDate
+        label: Updated Date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+        required: false
+
+      - name: heroImage
+        label: Hero Image
+        widget: image
+        required: false
+
+      - name: body
+        label: Body
+        widget: markdown
