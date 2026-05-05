@@ -5,6 +5,10 @@ A blog template built with [Astro](https://astro.build), managed via [Decap CMS]
 ## Project Structure
 
 ```text
+├── functions/
+│   └── api/
+│       ├── auth.js      # GitHub OAuth initiation (Cloudflare Pages Function)
+│       └── callback.js  # GitHub OAuth callback (Cloudflare Pages Function)
 ├── public/
 │   ├── admin/
 │   │   ├── config.yml   # Decap CMS configuration
@@ -90,14 +94,31 @@ backend:
 
 #### 3. Set up GitHub OAuth
 
-Decap CMS requires an OAuth proxy for GitHub authentication. Deploy the [`decap-cms-github-oauth-provider`](https://github.com/vencax/netlify-cms-github-oauth-provider) as a Cloudflare Worker, then set its URL as `base_url` in `config.yml`.
+GitHub OAuth is handled by built-in Cloudflare Pages Functions at `functions/api/auth.js` and `functions/api/callback.js`. No external OAuth proxy is needed.
 
-Steps:
-1. Register a [GitHub OAuth App](https://github.com/settings/developers)
-   - Homepage URL: your Cloudflare Pages URL
-   - Callback URL: `https://your-oauth-proxy.example.com/callback`
-2. Deploy the OAuth proxy worker with your GitHub App credentials
-3. Set `base_url` in `config.yml` to the worker URL
+**Register a GitHub OAuth App** at [github.com/settings/developers](https://github.com/settings/developers):
+
+| Field | Value |
+| :---- | :---- |
+| Homepage URL | `https://your-site.pages.dev` |
+| Authorization callback URL | `https://your-site.pages.dev/api/callback` |
+
+**Add environment variables** in the Cloudflare Pages dashboard under **Settings > Environment variables**:
+
+| Variable | Value |
+| :------------------- | :--------------------------------- |
+| `GITHUB_CLIENT_ID` | Your GitHub OAuth App Client ID |
+| `GITHUB_CLIENT_SECRET` | Your GitHub OAuth App Client Secret |
+
+**Update `base_url`** in `public/admin/config.yml` to your Cloudflare Pages URL:
+
+```yaml
+backend:
+  name: github
+  repo: your-github-username/your-repo-name
+  branch: main
+  base_url: https://your-site.pages.dev
+```
 
 #### 4. Deploy
 
