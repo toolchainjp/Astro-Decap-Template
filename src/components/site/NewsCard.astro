@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { findNewsCategory, formatDate, newsPermalink } from '../../lib/taxonomy';
+
+interface Props {
+	entry: CollectionEntry<'news'>;
+	/** 一覧グリッド用（true）か Recent Post スライダー用（false）か */
+	home?: boolean;
+}
+
+const { entry, home = true } = Astro.props;
+const category = findNewsCategory(entry.data.category);
+const image = entry.data.heroImage ?? category.defaultImage;
+---
+
+<div class={home ? 'c-card__item' : 'c-slider__item c-card__item'}>
+	<a href={newsPermalink(entry)} class="c-card__link">
+		<div class={home ? 'c-card__img c-card__img-home' : 'c-card__img'}>
+			<img
+				class="attachment-thumbnail size-thumbnail wp-post-image"
+				alt={entry.data.title}
+				decoding="async"
+				loading="lazy"
+				src={image}
+			/>
+		</div>
+		<h2 class="c-card__title">{entry.data.title}</h2>
+	</a>
+	<p class="c-card__meta">
+		<span class="c-card__date">{formatDate(entry.data.pubDate)}</span> &ensp;/&ensp;
+		<span class="c-card__category">
+			<a href={`/category/${category.slug}/`}>{category.label}</a>
+		</span>
+	</p>
+</div>

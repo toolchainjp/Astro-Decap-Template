@@ -16,6 +16,62 @@ media_folder: public/uploads
 public_folder: /uploads
 
 collections:
+  # ------------------------------------------------------------------
+  # 分類・カテゴリーの管理。ここに用語を足すと、
+  # 施工事例／インフォメーションの選択肢とアーカイブページが自動で増えます。
+  # ------------------------------------------------------------------
+  - name: settings
+    label: サイト設定
+    files:
+      - name: taxonomy
+        label: 分類・カテゴリー管理
+        file: src/data/taxonomy.json
+        description: "施工事例の用途分類と、インフォメーションのカテゴリーを管理します。"
+        fields:
+          - name: workClassifications
+            label: 施工事例の用途分類
+            widget: list
+            label_singular: 用途分類
+            summary: "{{fields.label}}（{{fields.slug}}）"
+            fields:
+              - name: slug
+                label: スラッグ（URL用）
+                widget: string
+                pattern: ["^[a-z0-9-]+$", "半角英数字とハイフンのみで入力してください"]
+                hint: "アーカイブURLになります。例: office → /works/classification/office/"
+              - name: label
+                label: 表示名
+                widget: string
+                hint: "例: オフィス"
+
+          - name: newsCategories
+            label: インフォメーションのカテゴリー
+            widget: list
+            label_singular: カテゴリー
+            summary: "{{fields.label}}（{{fields.slug}}）"
+            fields:
+              - name: slug
+                label: スラッグ（URL用）
+                widget: string
+                pattern: ["^[a-z0-9-]+$", "半角英数字とハイフンのみで入力してください"]
+                hint: "カテゴリー一覧のURLになります。例: news → /category/news/"
+              - name: label
+                label: 表示名
+                widget: string
+                hint: "例: おしらせ"
+              - name: basePath
+                label: 記事URLの接頭辞
+                widget: string
+                pattern: ["^/[a-z0-9-]+/$", "/news/ のように前後をスラッシュで挟んでください"]
+                hint: "記事URLの先頭部分。公開後に変更すると既存記事のURLが変わるのでご注意ください。"
+              - name: defaultImage
+                label: 既定のアイキャッチ
+                widget: image
+                hint: "記事でアイキャッチを設定しなかったときに使う画像です。"
+
+  # ------------------------------------------------------------------
+  # インフォメーション（おしらせ / 採用情報 / 施工事例）
+  # ------------------------------------------------------------------
   - name: news
     label: インフォメーション
     label_singular: お知らせ
@@ -25,6 +81,9 @@ collections:
     extension: md
     format: frontmatter
     sortable_fields: [pubDate, title]
+    view_groups:
+      - label: カテゴリー
+        field: category
     fields:
       - name: title
         label: タイトル
@@ -39,27 +98,51 @@ collections:
 
       - name: category
         label: カテゴリー
-        widget: select
-        options:
-          - おしらせ
-          - 採用情報
-          - 施工事例（Works）
+        widget: relation
+        collection: settings
+        file: taxonomy
+        search_fields: ["newsCategories.*.label"]
+        value_field: "newsCategories.*.slug"
+        display_fields: ["newsCategories.*.label"]
+        hint: "選択肢は「サイト設定 › 分類・カテゴリー管理」で追加できます。"
 
-      - name: permalink
-        label: パーマリンク
-        widget: string
-        hint: "公開URL。例: /news/example-post/ （/news/ ・ /recruit/ ・ /work/ のいずれかで始めてください）"
-        pattern: ["^/(news|recruit|work)/[a-z0-9-]+/$", "/news/ ・ /recruit/ ・ /work/ のいずれかで始まり、末尾は / で終わる必要があります"]
+      - name: tags
+        label: タグ
+        widget: list
+        required: false
+        default: []
+        summary: "{{fields.tag}}"
+        field:
+          name: tag
+          label: タグ
+          widget: string
+        hint: "自由入力です。同じタグを付けた記事が /information/tag/... にまとまります。"
 
       - name: heroImage
         label: アイキャッチ画像
         widget: image
+        required: false
+        hint: "未設定の場合はカテゴリーの既定画像が使われます。"
+
+      - name: permalink
+        label: パーマリンク（任意）
+        widget: string
+        required: false
+        hint: "通常は空欄でOK（カテゴリーの接頭辞＋ファイル名で自動生成されます）。既存記事のURLを維持したいときだけ指定してください。例: /news/example-post/"
+
+      - name: draft
+        label: 下書き（サイトに公開しない）
+        widget: boolean
+        default: false
         required: false
 
       - name: body
         label: 本文
         widget: markdown
 
+  # ------------------------------------------------------------------
+  # 施工事例（Works）
+  # ------------------------------------------------------------------
   - name: works
     label: 施工事例
     label_singular: 施工事例
@@ -68,7 +151,11 @@ collections:
     slug: "{{slug}}"
     extension: md
     format: frontmatter
+    preview_path: works/{{slug}}
     sortable_fields: [order, completionDate, title]
+    view_groups:
+      - label: 用途分類
+        field: classification
     fields:
       - name: title
         label: 物件名
@@ -76,47 +163,80 @@ collections:
 
       - name: classification
         label: 用途分類
-        widget: select
-        options:
-          - オフィス
-          - 住宅施設
-          - カーディーラー
-          - 工場
-          - 倉庫
-          - 医療・福祉施設
-          - 文化・教育施設
+        widget: relation
+        collection: settings
+        file: taxonomy
+        search_fields: ["workClassifications.*.label"]
+        value_field: "workClassifications.*.slug"
+        display_fields: ["workClassifications.*.label"]
+        hint: "選択肢は「サイト設定 › 分類・カテゴリー管理」で追加できます。"
+
+      - name: tags
+        label: タグ
+        widget: list
+        required: false
+        default: []
+        summary: "{{fields.tag}}"
+        field:
+          name: tag
+          label: タグ
+          widget: string
+        hint: "自由入力です。例: 埼玉県 / S造 / 増築。同じタグの事例が /works/tag/... にまとまります。"
 
       - name: location
         label: 所在地
         widget: string
+        required: false
         hint: "例: 埼玉県"
 
       - name: locationEn
         label: 所在地（英字・一覧カード用）
         widget: string
+        required: false
         hint: "例: Saitama / Tokyo"
 
       - name: structure
         label: 構造
         widget: string
+        required: false
         hint: "例: S造 4階"
 
       - name: scale
         label: 規模
         widget: string
+        required: false
         hint: "例: （延べ床面積）659㎡"
 
       - name: completion
         label: 竣工（表示用）
         widget: string
+        required: false
         hint: "例: 2011年06月"
 
       - name: completionDate
         label: 竣工日（並び替え用）
         widget: datetime
+        required: false
         date_format: YYYY-MM-DD
         time_format: false
         format: YYYY-MM-DD
+
+      - name: specs
+        label: 追加の項目
+        widget: list
+        required: false
+        default: []
+        label_singular: 項目
+        summary: "{{fields.label}}：{{fields.value}}"
+        fields:
+          - name: label
+            label: 項目名
+            widget: string
+            hint: "例: 敷地面積 / 用途 / 工期"
+          - name: value
+            label: 内容
+            widget: string
+        hint: "所在地・構造・規模・竣工の下に、好きな項目を追加できます。"
 
       - name: order
         label: 表示順
@@ -128,11 +248,25 @@ collections:
       - name: images
         label: 写真
         widget: list
+        required: false
+        default: []
         field:
           name: image
           label: 画像
           widget: image
-        hint: "1枚目が一覧ページのサムネイルになります。"
+        hint: "詳細ページに上から順に表示されます。"
+
+      - name: thumbnail
+        label: 一覧用サムネイル
+        widget: image
+        required: false
+        hint: "未設定の場合は「写真」の1枚目が使われます。"
+
+      - name: draft
+        label: 下書き（サイトに公開しない）
+        widget: boolean
+        default: false
+        required: false
 
       - name: body
         label: 補足（任意）

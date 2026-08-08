@@ -1,0 +1,9 @@
+---
+import type { GetStaticPaths } from 'astro';
+import NewsSingle from '../../layouts/NewsSingle.astro';
+import { newsPathsFor } from '../../lib/collections';
+
+export const getStaticPaths: GetStaticPaths = () => newsPathsFor('/news/');
+---
+
+<NewsSingle {...Astro.props} />

@@ -1,8 +1,9 @@
 ---
 title: 新卒・中途採用の募集要項を公開しました
 pubDate: 2025-08-27
-category: 採用情報
+category: recruit
 permalink: /recruit/recruit-info-202508/
+tags: []
 ---
 
 このたびホームページのリニューアルに伴い、採用情報を更新いたしました。

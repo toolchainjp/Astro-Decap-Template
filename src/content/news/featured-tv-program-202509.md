@@ -1,9 +1,10 @@
 ---
 title: テレビ埼玉「彩の国 就活天国！！」の8月28日（木）放送分に当社が出演いたしました
 pubDate: 2025-09-17
-category: おしらせ
+category: news
 permalink: /news/featured-tv-program-202509/
 heroImage: /uploads/blog_img_20250917.jpg
+tags: []
 ---
 
 埼玉県で就職を目指す人に、就活の疑問やポイント等をわかりやすく伝える情報番組、テレビ埼玉「彩の国 就活天国！！」の8月28日（木）放送分に当社が出演いたしました。

@@ -1,0 +1,54 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Site from '../../../layouts/Site.astro';
+import Breadcrumbs from '../../../components/site/Breadcrumbs.astro';
+import CtaSection from '../../../components/site/CtaSection.astro';
+import WorksGrid from '../../../components/site/WorksGrid.astro';
+import { getWorks } from '../../../lib/collections';
+import { collectTags } from '../../../lib/taxonomy';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const works = await getWorks();
+	return collectTags(works).map(({ tag }) => ({
+		params: { tag },
+		props: { tag, entries: works.filter((entry) => entry.data.tags.includes(tag)) },
+	}));
+};
+
+const { tag, entries } = Astro.props;
+---
+
+<Site
+	title={`#${tag} の施工事例 | 八生建設株式会社`}
+	description={`「${tag}」のタグが付いた八生建設の建築実績一覧。`}
+	bodyClass="archive tag post-type-archive-works"
+>
+	<Breadcrumbs variant="container" items={[{ href: '/works/', label: '施工実績' }, { label: `#${tag}` }]} />
+
+	<main>
+		<section class="standard-sec works-list-sec">
+			<div class="outer-container">
+				<h1 class="archive-ttl01">#{tag}</h1>
+				<p class="archive-ttl02">「{tag}」のタグが付いた建築実績です。</p>
+				<p class="archive-ttl03">{entries.length}/{entries.length}</p>
+			</div>
+		</section>
+
+		<WorksGrid entries={entries} heading={`#${tag} の一覧`} />
+
+		<section class="works-back">
+			<div class="outer-container">
+				<a href="/works/" class="back-to-works-link">すべての施工事例を見る</a>
+			</div>
+		</section>
+	</main>
+
+	<CtaSection />
+</Site>
+
+<style>
+	.works-back {
+		padding: 0 0 4rem;
+		text-align: center;
+	}
+</style>

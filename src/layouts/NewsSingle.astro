@@ -1,0 +1,157 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import Site from './Site.astro';
+import Breadcrumbs from '../components/site/Breadcrumbs.astro';
+import CtaSection from '../components/site/CtaSection.astro';
+import NewsCard from '../components/site/NewsCard.astro';
+import NewsSidebar from '../components/site/NewsSidebar.astro';
+import RecruitBanner from '../components/site/RecruitBanner.astro';
+import { findNewsCategory, formatDate, newsPermalink, tagPath } from '../lib/taxonomy';
+
+interface Props {
+	entry: CollectionEntry<'news'>;
+	prev: CollectionEntry<'news'> | null;
+	next: CollectionEntry<'news'> | null;
+	posts: CollectionEntry<'news'>[];
+}
+
+const { entry, prev, next, posts } = Astro.props;
+const { title, pubDate, tags, heroImage } = entry.data;
+const category = findNewsCategory(entry.data.category);
+const image = heroImage ?? category.defaultImage;
+const { Content } = await render(entry);
+
+const recent = posts.filter((post) => post.id !== entry.id).slice(0, 6);
+---
+
+<Site
+	title={`${title} | インフォメーション | 八生建設株式会社`}
+	description={title}
+	image={image}
+	bodyClass={`wp-singular post-template-default single single-post category-${category.slug}`}
+>
+	<main>
+		<Breadcrumbs
+			variant="single"
+			items={[{ href: '/information/', label: 'インフォメーション' }, { label: title }]}
+		/>
+
+		<section class="l-section l-section-single__fv">
+			<div class="l-container--outer l-section-single__fv--inner"></div>
+		</section>
+		<section class="l-section-single--background-fv"></section>
+
+		<section class="l-section l-section--single">
+			<div class="l-container c-grid c-grid--single">
+				<article class="p-single__main">
+					<div class="p-single__header">
+						<div class="p-single__catch-img">
+							<img class="attachment-thumbnail size-thumbnail wp-post-image" alt={title} decoding="async" src={image} />
+						</div>
+						<ul class="post-categories">
+							<li><a href={`/category/${category.slug}/`} rel="category tag">{category.label}</a></li>
+						</ul>
+						<h1 class="p-single__title">{title}</h1>
+						<p class="p-single__date">Date: {formatDate(pubDate)}</p>
+					</div>
+
+					<div class="p-single__content">
+						<Content />
+					</div>
+
+					{
+						tags.length > 0 && (
+							<ul class="p-single__tags">
+								{tags.map((tag) => (
+									<li>
+										<a href={tagPath('/information', tag)}>#{tag}</a>
+									</li>
+								))}
+							</ul>
+						)
+					}
+
+					<div class="pagination-single">
+						{
+							prev ? (
+								<div class="btn prev-page">
+									<a href={newsPermalink(prev)} rel="prev">
+										Prev
+									</a>
+								</div>
+							) : (
+								<div class="btn prev-page inactive" />
+							)
+						}
+						{
+							next ? (
+								<div class="btn next-page">
+									<a href={newsPermalink(next)} rel="next">
+										Next
+									</a>
+								</div>
+							) : (
+								<div class="btn next-page inactive" />
+							)
+						}
+					</div>
+				</article>
+
+				<NewsSidebar posts={posts} activeCategory={category.slug} />
+			</div>
+		</section>
+
+		{
+			recent.length > 0 && (
+				<section class="l-section l-section__sidebar-recent-post">
+					<div class="l-container l-container--outer c-grid c-grid--recent-post">
+						<aside class="p-single__head">
+							<h2 class="f-heading__secondary-recent-post">Recent Post</h2>
+							<p>
+								<a href="/information/" class="c-button">
+									View More
+								</a>
+							</p>
+						</aside>
+						<div class="p-single__slider">
+							<div class="c-slider js-slider-recent-post">
+								{recent.map((post) => (
+									<NewsCard entry={post} home={false} />
+								))}
+							</div>
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		<RecruitBanner />
+	</main>
+
+	<CtaSection />
+</Site>
+
+<style>
+	.p-single__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		list-style: none;
+		margin: 2rem 0 0;
+		padding: 0;
+	}
+	.p-single__tags a {
+		display: inline-block;
+		padding: 0.35rem 0.9rem;
+		border: 1px solid #ccc;
+		border-radius: 999px;
+		font-size: 0.82rem;
+		color: inherit;
+		text-decoration: none;
+	}
+	.p-single__tags a:hover {
+		border-color: #185ef1;
+		color: #185ef1;
+	}
+</style>

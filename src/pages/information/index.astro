@@ -1,12 +1,17 @@
 ---
-import Site from '../../layouts/Site.astro';
-import content from '../../fragments/information/content.html?raw';
+import NewsList from '../../layouts/NewsList.astro';
+import { getNews } from '../../lib/collections';
+
+const posts = await getNews();
 ---
 
-<Site
+<NewsList
 	title="インフォメーション | 八生建設株式会社"
 	description="八生建設からのおしらせ・採用情報・施工事例に関する最新情報。"
+	heading="インフォメーション"
+	subheading="Information List"
 	bodyClass="blog wp-singular page-template-default page"
->
-	<Fragment set:html={content} />
-</Site>
+	breadcrumbs={[{ label: 'インフォメーション' }]}
+	entries={posts}
+	posts={posts}
+/>

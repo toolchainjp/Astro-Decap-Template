@@ -1,0 +1,28 @@
+---
+import type { GetStaticPaths } from 'astro';
+import NewsList from '../../../layouts/NewsList.astro';
+import { getNews } from '../../../lib/collections';
+import { collectTags } from '../../../lib/taxonomy';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const posts = await getNews();
+	return collectTags(posts).map(({ tag }) => ({
+		params: { tag },
+		props: { tag, entries: posts.filter((post) => post.data.tags.includes(tag)), posts },
+	}));
+};
+
+const { tag, entries, posts } = Astro.props;
+---
+
+<NewsList
+	title={`#${tag} | インフォメーション | 八生建設株式会社`}
+	description={`「${tag}」のタグが付いた八生建設の記事一覧。`}
+	heading={`#${tag}`}
+	subheading="Information List"
+	bodyClass="archive tag"
+	breadcrumbs={[{ href: '/information/', label: 'インフォメーション' }, { label: `#${tag}` }]}
+	entries={entries}
+	posts={posts}
+	activeTag={tag}
+/>

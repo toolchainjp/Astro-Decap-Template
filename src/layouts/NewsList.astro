@@ -1,0 +1,76 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Site from './Site.astro';
+import Breadcrumbs from '../components/site/Breadcrumbs.astro';
+import CtaSection from '../components/site/CtaSection.astro';
+import InformationIcon from '../components/site/InformationIcon.astro';
+import NewsCard from '../components/site/NewsCard.astro';
+import NewsSidebar from '../components/site/NewsSidebar.astro';
+import RecruitBanner from '../components/site/RecruitBanner.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	/** 見出し（h1）と英語サブ見出し */
+	heading: string;
+	subheading: string;
+	bodyClass: string;
+	/** トップページを除くパンくず階層 */
+	breadcrumbs: { href?: string; label: string }[];
+	/** この一覧に表示する記事 */
+	entries: CollectionEntry<'news'>[];
+	/** サイドバーの件数集計に使う全記事 */
+	posts: CollectionEntry<'news'>[];
+	activeCategory?: string;
+	activeTag?: string;
+}
+
+const { title, description, heading, subheading, bodyClass, breadcrumbs, entries, posts, activeCategory, activeTag } =
+	Astro.props;
+---
+
+<Site title={title} description={description} bodyClass={bodyClass}>
+	<main>
+		<Breadcrumbs variant="container" items={breadcrumbs} />
+
+		<section class="category-page">
+			<div class="container">
+				<InformationIcon />
+				<h1 class="cat-ttl01">{heading}</h1>
+				<p class="cat-ttl02">{subheading}</p>
+			</div>
+
+			<div class="l-container l-container--outer c-grid c-grid--single u-mt80">
+				<div class="outer-content">
+					{
+						entries.length > 0 ? (
+							<div class="c-grid c-grid--3col c-grid--3col-post c-card">
+								{entries.map((entry) => (
+									<NewsCard entry={entry} />
+								))}
+							</div>
+						) : (
+							<p class="news-empty">該当する記事はまだありません。</p>
+						)
+					}
+					<div class="pagination">
+						<div class="nav-links"></div>
+					</div>
+				</div>
+
+				<NewsSidebar posts={posts} activeCategory={activeCategory} activeTag={activeTag} />
+			</div>
+		</section>
+
+		<RecruitBanner />
+	</main>
+
+	<CtaSection />
+</Site>
+
+<style>
+	.news-empty {
+		margin: 2rem 0;
+		color: #666;
+	}
+</style>

@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { worksThumbnail } from '../../lib/taxonomy';
+
+interface Props {
+	entry: CollectionEntry<'works'>;
+}
+
+const { entry } = Astro.props;
+const { title, locationEn, classification, tags } = entry.data;
+
+// 一覧の絞り込み（/works/ のチェックボックス＋キーワード検索）が
+// 参照するメタデータ。JSは data-* だけを見るので、項目が増えても壊れません。
+const keywords = [title, entry.data.location, entry.data.structure, entry.data.scale, ...tags]
+	.filter(Boolean)
+	.join(' ');
+---
+
+<div class="item" data-classification={classification} data-tags={tags.join(',')} data-keywords={keywords}>
+	<a href={`/works/${entry.id}/`} class="works-link">
+		<figure>
+			<img
+				width="300"
+				height="300"
+				class="attachment-thumbnail size-thumbnail wp-post-image"
+				alt={title}
+				decoding="async"
+				loading="lazy"
+				src={worksThumbnail(entry.data)}
+			/>
+		</figure>
+		<p class="works-head02">
+			{title}<br />
+			{locationEn && <span class="note-text">location&ensp;{locationEn}</span>}
+		</p>
+	</a>
+</div>

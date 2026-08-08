@@ -1,11 +1,10 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getNews } from '../lib/collections';
+import { findNewsCategory, newsPermalink } from '../lib/taxonomy';
 
 export async function GET(context) {
-	const posts = (await getCollection('news')).sort(
-		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-	);
+	const posts = await getNews();
 
 	return rss({
 		title: SITE_TITLE,
@@ -14,8 +13,8 @@ export async function GET(context) {
 		items: posts.map((post) => ({
 			title: post.data.title,
 			pubDate: post.data.pubDate,
-			categories: [post.data.category],
-			link: post.data.permalink,
+			categories: [findNewsCategory(post.data.category).label, ...post.data.tags],
+			link: newsPermalink(post),
 		})),
 	});
 }

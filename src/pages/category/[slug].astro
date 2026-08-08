@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths } from 'astro';
+import NewsList from '../../layouts/NewsList.astro';
+import { getNews } from '../../lib/collections';
+import { findNewsCategory, newsCategories } from '../../lib/taxonomy';
+
+// 元サイトと同じ /category/{slug}/ を維持しています。
+export const getStaticPaths: GetStaticPaths = async () => {
+	const posts = await getNews();
+	const slugs = new Set([...newsCategories.map((term) => term.slug), ...posts.map((post) => post.data.category)]);
+
+	return [...slugs]
+		.map((slug) => ({
+			params: { slug },
+			props: { entries: posts.filter((post) => post.data.category === slug), posts },
+		}))
+		.filter((route) => route.props.entries.length > 0);
+};
+
+const { slug } = Astro.params;
+const { entries, posts } = Astro.props;
+const category = findNewsCategory(slug!);
+---
+
+<NewsList
+	title={`${category.label} | インフォメーション | 八生建設株式会社`}
+	description={`八生建設の${category.label}に関する記事一覧。`}
+	heading={category.label}
+	subheading="Information List"
+	bodyClass={`archive category category-${category.slug}`}
+	breadcrumbs={[{ href: '/information/', label: 'インフォメーション' }, { label: category.label }]}
+	entries={entries}
+	posts={posts}
+	activeCategory={category.slug}
+/>

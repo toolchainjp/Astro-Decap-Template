@@ -1,6 +1,6 @@
 ---
 title: Fビル
-classification: オフィス
+classification: office
 location: 埼玉県
 locationEn: Saitama
 structure: S造 8階
@@ -8,6 +8,10 @@ scale: （延べ床面積）1276㎡
 completion: 2016年09月
 completionDate: 2016-09-01
 order: 10
+thumbnail: /uploads/case004_01-300x300.jpg
+tags:
+  - 埼玉県
+  - S造
 images:
   - /uploads/case004_01.jpg
   - /uploads/case004_02.jpg

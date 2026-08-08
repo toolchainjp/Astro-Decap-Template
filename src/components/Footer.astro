@@ -1,10 +1,9 @@
 ---
 import { COMPANY, SITE_TITLE } from '../consts';
-import { getCollection } from 'astro:content';
+import { getNews } from '../lib/collections';
+import { newsPermalink } from '../lib/taxonomy';
 
-const news = (await getCollection('news'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3);
+const news = (await getNews()).slice(0, 3);
 
 const fmt = (d: Date) =>
 	`${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
@@ -48,7 +47,7 @@ const fmt = (d: Date) =>
 				{
 					news.map((post) => (
 						<li>
-							<a href={post.data.permalink}>
+							<a href={newsPermalink(post)}>
 								<time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
 								<span>{post.data.title}</span>
 							</a>

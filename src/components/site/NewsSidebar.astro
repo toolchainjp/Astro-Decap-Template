@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { collectTags, newsCategories, pad3, tagPath } from '../../lib/taxonomy';
+
+interface Props {
+	/** 公開中の記事すべて。件数の集計に使います。 */
+	posts: CollectionEntry<'news'>[];
+	/** 現在表示中のカテゴリー slug（あれば） */
+	activeCategory?: string;
+	/** 現在表示中のタグ（あれば） */
+	activeTag?: string;
+}
+
+const { posts, activeCategory, activeTag } = Astro.props;
+
+// taxonomy.json に登録された順で、記事が1件以上あるカテゴリーだけ出します。
+const categories = newsCategories
+	.map((category) => ({
+		...category,
+		count: posts.filter((post) => post.data.category === category.slug).length,
+	}))
+	.filter((category) => category.count > 0);
+
+const tags = collectTags(posts);
+---
+
+<aside class="p-single__sidebar single-side">
+	<div class="p-single__sidebar-wrap menu-cat-list-container">
+		<ul id="menu-cat-list" class="p-single__sidebar-menu menu">
+			<li class="p-single__sidebar-menu-item menu-item">
+				<a href="/information/">
+					おしらせ・ニュース一覧<span class="p-single__sidebar-page-num">{pad3(posts.length)}</span>
+				</a>
+			</li>
+			{
+				categories.map((category) => (
+					<li
+						class:list={[
+							'p-single__sidebar-menu-item',
+							'menu-item',
+							activeCategory === category.slug && 'current-menu-item',
+						]}
+					>
+						<a href={`/category/${category.slug}/`}>
+							{category.label}
+							<span class="p-single__sidebar-page-num">{pad3(category.count)}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+
+	{
+		tags.length > 0 && (
+			<div class="p-single__sidebar-wrap menu-tag-list-container">
+				<ul id="menu-tag-list" class="p-single__sidebar-menu menu">
+					{tags.map(({ tag, count }) => (
+						<li
+							class:list={['p-single__sidebar-menu-item', 'menu-item', activeTag === tag && 'current-menu-item']}
+						>
+							<a href={tagPath('/information', tag)}>
+								#{tag}
+								<span class="p-single__sidebar-page-num">{pad3(count)}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		)
+	}
+</aside>

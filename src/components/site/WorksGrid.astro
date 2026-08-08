@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WorksCard from './WorksCard.astro';
+
+interface Props {
+	entries: CollectionEntry<'works'>[];
+	heading: string;
+}
+
+const { entries, heading } = Astro.props;
+---
+
+<section class="works-sec">
+	<h2 class="search-ttl02">{heading}</h2>
+	<div class="block" id="works-list">
+		{entries.map((entry) => <WorksCard entry={entry} />)}
+	</div>
+	<p class="works-empty" id="works-empty" hidden>該当する施工事例はありませんでした。</p>
+</section>
+
+<style>
+	.works-empty {
+		margin: 2rem auto;
+		text-align: center;
+		color: #666;
+	}
+</style>

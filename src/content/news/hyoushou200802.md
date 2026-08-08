@@ -1,8 +1,9 @@
 ---
 title: 「平成19年度埼玉県優秀建設工事施工者表彰」を受賞。
 pubDate: 2011-07-14
-category: おしらせ
+category: news
 permalink: /news/hyoushou200802/
+tags: []
 ---
 
 「平成19年度埼玉県優秀建設工事施工者表彰式」が執り行われました。

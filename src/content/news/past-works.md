@@ -1,8 +1,10 @@
 ---
 title: 八生建設の施工事例をご紹介します
 pubDate: 2025-08-28
-category: 施工事例（Works）
+category: work
 permalink: /work/past-works/
+heroImage: /uploads/case001_02.jpg
+tags: []
 ---
 
 このたび、ホームページに伴い、八生建設の施工事例ページを刷新しました。

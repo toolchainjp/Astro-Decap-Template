@@ -1,8 +1,10 @@
 ---
 title: ホームページをリニューアルしました
 pubDate: 2025-08-30
-category: おしらせ
+category: news
 permalink: /news/web-renewal-202508/
+heroImage: /uploads/company_top_img.jpg
+tags: []
 ---
 
 平素より八生建設株式会社のホームページをご利用いただき誠にありがとうございます。

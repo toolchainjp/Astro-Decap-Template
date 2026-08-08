@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Site from '../../../layouts/Site.astro';
+import Breadcrumbs from '../../../components/site/Breadcrumbs.astro';
+import CtaSection from '../../../components/site/CtaSection.astro';
+import WorksGrid from '../../../components/site/WorksGrid.astro';
+import { getWorks } from '../../../lib/collections';
+import { findClassification, workClassifications } from '../../../lib/taxonomy';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	const works = await getWorks();
+	// taxonomy.json の登録分に加えて、記事側にしか無い slug も拾っておきます。
+	const slugs = new Set([
+		...workClassifications.map((term) => term.slug),
+		...works.map((entry) => entry.data.classification),
+	]);
+
+	return [...slugs]
+		.map((slug) => ({
+			params: { slug },
+			props: { entries: works.filter((entry) => entry.data.classification === slug) },
+		}))
+		.filter((route) => route.props.entries.length > 0);
+};
+
+const { slug } = Astro.params;
+const { entries } = Astro.props;
+const term = findClassification(slug!);
+---
+
+<Site
+	title={`${term.label}の施工事例 | 八生建設株式会社`}
+	description={`八生建設の${term.label}に関する建築実績一覧。`}
+	bodyClass="archive tax-classification post-type-archive-works"
+>
+	<Breadcrumbs variant="container" items={[{ href: '/works/', label: '施工実績' }, { label: term.label }]} />
+
+	<main>
+		<section class="standard-sec works-list-sec">
+			<div class="outer-container">
+				<h1 class="archive-ttl01">{term.label}</h1>
+				<p class="archive-ttl02">HASSEIが手がけた{term.label}の建築実績です。</p>
+				<p class="archive-ttl03">{entries.length}/{entries.length}</p>
+			</div>
+		</section>
+
+		<WorksGrid entries={entries} heading={`${term.label}の一覧`} />
+
+		<section class="works-back">
+			<div class="outer-container">
+				<a href="/works/" class="back-to-works-link">すべての施工事例を見る</a>
+			</div>
+		</section>
+	</main>
+
+	<CtaSection />
+</Site>
+
+<style>
+	.works-back {
+		padding: 0 0 4rem;
+		text-align: center;
+	}
+</style>

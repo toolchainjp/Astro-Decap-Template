@@ -1,9 +1,10 @@
 ---
 title: 弊社指定請求書の様式変更についてのご案内
 pubDate: 2023-10-17
-category: おしらせ
+category: news
 permalink: /news/invoice-update-2023/
 heroImage: /uploads/invoice_format.png
+tags: []
 ---
 
 清秋の候、貴社ますますご清栄のこととお慶び申し上げます。

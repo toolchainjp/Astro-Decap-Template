@@ -1,6 +1,18 @@
 ---
 import Site from '../../layouts/Site.astro';
-import content from '../../fragments/works/content.html?raw';
+import Breadcrumbs from '../../components/site/Breadcrumbs.astro';
+import CtaSection from '../../components/site/CtaSection.astro';
+import WorksGrid from '../../components/site/WorksGrid.astro';
+import { getWorks } from '../../lib/collections';
+import { collectTags, tagPath, workClassifications } from '../../lib/taxonomy';
+
+const works = await getWorks();
+
+// 実際に使われている分類だけを絞り込みUIに出します。
+// taxonomy.json に用語を足せばここも自動で増えます。
+const used = new Set(works.map((entry) => entry.data.classification));
+const classifications = workClassifications.filter((term) => used.has(term.slug));
+const tags = collectTags(works);
 ---
 
 <Site
@@ -8,5 +20,163 @@ import content from '../../fragments/works/content.html?raw';
 	description="八生建設のこれまでの建築実績一覧。"
 	bodyClass="archive post-type-archive post-type-archive-works"
 >
-	<Fragment set:html={content} />
+	<Breadcrumbs variant="container" items={[{ label: '施工実績' }]} />
+
+	<main>
+		<section class="standard-sec works-list-sec">
+			<div class="outer-container">
+				<h1 class="archive-ttl01">建築実績一覧</h1>
+				<p class="archive-ttl02">
+					豊かな社会と人の暮らしにコミットする。<br class="u-tab-off" />
+					HASSEIの価値観は、私たちが築く<br class="u-tab-off" />
+					<span class="text-gradation">あらゆるものに反映</span>されています。
+				</p>
+				<p class="archive-ttl03"><span id="works-count">{works.length}</span>/{works.length}</p>
+			</div>
+		</section>
+
+		<section class="select-section">
+			<div class="outer-container">
+				<form action="/works/" method="get" class="c-grid c-grid--7-3" id="works-filter">
+					<ul class="select-terms">
+						<li>
+							<input type="checkbox" name="classification[]" value="all" id="all" checked />
+							<label for="all">すべて</label>
+						</li>
+						{
+							classifications.map((term) => (
+								<li>
+									<input type="checkbox" name="classification[]" value={term.slug} id={term.slug} />
+									<label for={term.slug}>{term.label}</label>
+								</li>
+							))
+						}
+					</ul>
+					<div class="search-area">
+						<input type="text" name="s" placeholder="キーワードを入力" value="" class="free-word-search" />
+						<button type="submit">検&ensp;索</button>
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<WorksGrid entries={works} heading="すべての一覧" />
+
+		{
+			tags.length > 0 && (
+				<section class="works-tags">
+					<div class="outer-container">
+						<h2 class="search-ttl02">タグから探す</h2>
+						<ul class="works-tag-list">
+							{tags.map(({ tag, count }) => (
+								<li>
+									<a href={tagPath('/works', tag)}>
+										#{tag}
+										<span>({count})</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				</section>
+			)
+		}
+	</main>
+
+	<CtaSection />
 </Site>
+
+<style>
+	.works-tags {
+		padding: 0 0 4rem;
+	}
+	.works-tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		list-style: none;
+		margin: 1.5rem 0 0;
+		padding: 0;
+	}
+	.works-tag-list a {
+		display: inline-block;
+		padding: 0.35rem 0.9rem;
+		border: 1px solid #ccc;
+		border-radius: 999px;
+		font-size: 0.82rem;
+		color: inherit;
+		text-decoration: none;
+	}
+	.works-tag-list a:hover {
+		border-color: #185ef1;
+		color: #185ef1;
+	}
+	.works-tag-list span {
+		margin-left: 0.3rem;
+		color: #999;
+	}
+</style>
+
+<script>
+	// 静的サイトなのでサーバー側では絞り込めません。
+	// カードの data-* だけを見て表示/非表示を切り替えます。
+	const form = document.getElementById('works-filter') as HTMLFormElement | null;
+	const list = document.getElementById('works-list');
+	const empty = document.getElementById('works-empty');
+	const counter = document.getElementById('works-count');
+
+	if (form && list && empty && counter) {
+		const all = form.querySelector<HTMLInputElement>('#all')!;
+		const terms = [...form.querySelectorAll<HTMLInputElement>('input[name="classification[]"]')].filter(
+			(input) => input !== all,
+		);
+		const keyword = form.querySelector<HTMLInputElement>('.free-word-search')!;
+		const items = [...list.querySelectorAll<HTMLElement>('.item')];
+
+		const apply = () => {
+			const selected = terms.filter((input) => input.checked).map((input) => input.value);
+			const query = keyword.value.trim().toLowerCase();
+
+			let visible = 0;
+			for (const item of items) {
+				const matchesTerm = selected.length === 0 || selected.includes(item.dataset.classification ?? '');
+				const matchesQuery = query === '' || (item.dataset.keywords ?? '').toLowerCase().includes(query);
+				const show = matchesTerm && matchesQuery;
+				item.hidden = !show;
+				if (show) visible++;
+			}
+
+			counter.textContent = String(visible);
+			empty.hidden = visible > 0;
+		};
+
+		all.addEventListener('change', () => {
+			if (all.checked) terms.forEach((input) => (input.checked = false));
+			apply();
+		});
+
+		for (const input of terms) {
+			input.addEventListener('change', () => {
+				all.checked = terms.every((other) => !other.checked);
+				apply();
+			});
+		}
+
+		keyword.addEventListener('input', apply);
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			apply();
+		});
+
+		// URLの ?classification=office&s=... を初期値として反映（他ページからの導線用）
+		const params = new URLSearchParams(location.search);
+		const preset = params.getAll('classification').concat(params.getAll('classification[]'));
+		if (preset.length > 0) {
+			for (const input of terms) input.checked = preset.includes(input.value);
+			all.checked = terms.every((input) => !input.checked);
+		}
+		const presetQuery = params.get('s');
+		if (presetQuery) keyword.value = presetQuery;
+		apply();
+	}
+</script>

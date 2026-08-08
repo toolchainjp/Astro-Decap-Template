@@ -1,0 +1,16 @@
+{
+	"workClassifications": [
+		{ "slug": "office", "label": "オフィス" },
+		{ "slug": "houses", "label": "住宅施設" },
+		{ "slug": "car-dealer", "label": "カーディーラー" },
+		{ "slug": "factories", "label": "工場" },
+		{ "slug": "warehouse", "label": "倉庫" },
+		{ "slug": "medical", "label": "医療・福祉施設" },
+		{ "slug": "cultures", "label": "文化・教育施設" }
+	],
+	"newsCategories": [
+		{ "slug": "news", "label": "おしらせ", "basePath": "/news/", "defaultImage": "/uploads/eye-catch_news.svg" },
+		{ "slug": "recruit", "label": "採用情報", "basePath": "/recruit/", "defaultImage": "/uploads/eye-catch_recruit.svg" },
+		{ "slug": "work", "label": "施工事例（Works）", "basePath": "/work/", "defaultImage": "/uploads/eye-catch_news.svg" }
+	]
+}
