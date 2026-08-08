@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/entry/content.html?raw';
+---
+
+<Site
+	title="エントリーフォーム | 八生建設株式会社"
+	description="八生建設株式会社の採用エントリーフォーム。"
+	bodyClass="wp-singular page-template-default page"
+>
+	<Fragment set:html={content} />
+</Site>

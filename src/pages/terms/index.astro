@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/terms/content.html?raw';
+---
+
+<Site
+	title="サイト利用規約 | 八生建設株式会社"
+	description="八生建設株式会社ウェブサイトの利用規約・免責事項・Cookieの取り扱いについて。"
+	bodyClass="wp-singular page-template-default page"
+>
+	<Fragment set:html={content} />
+</Site>

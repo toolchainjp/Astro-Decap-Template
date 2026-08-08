@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/recruit_recruit-info-202508/content.html?raw';
+---
+
+<Site
+	title="新卒・中途採用の募集要項を公開しました | 八生建設株式会社"
+	description="新卒・中途採用の募集要項を公開しました"
+	bodyClass="wp-singular post-template-default single single-post"
+>
+	<Fragment set:html={content} />
+</Site>

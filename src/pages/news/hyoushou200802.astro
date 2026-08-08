@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/news_hyoushou200802/content.html?raw';
+---
+
+<Site
+	title="「平成19年度埼玉県優秀建設工事施工者表彰」を受賞。 | 八生建設株式会社"
+	description="「平成19年度埼玉県優秀建設工事施工者表彰」を受賞。"
+	bodyClass="wp-singular post-template-default single single-post"
+>
+	<Fragment set:html={content} />
+</Site>

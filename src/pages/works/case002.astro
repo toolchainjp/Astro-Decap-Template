@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/works_case002/content.html?raw';
+---
+
+<Site
+	title="K事務所ビル | 施工事例 | 八生建設株式会社"
+	description="K事務所ビル｜八生建設の施工事例。"
+	bodyClass="wp-singular works-template-default single single-works"
+>
+	<Fragment set:html={content} />
+</Site>

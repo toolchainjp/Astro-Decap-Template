@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/work_past-works/content.html?raw';
+---
+
+<Site
+	title="八生建設の施工事例をご紹介します | 八生建設株式会社"
+	description="八生建設の施工事例をご紹介します"
+	bodyClass="wp-singular post-template-default single single-post"
+>
+	<Fragment set:html={content} />
+</Site>

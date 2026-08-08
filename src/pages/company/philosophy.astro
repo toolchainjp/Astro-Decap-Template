@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/company_philosophy/content.html?raw';
+---
+
+<Site
+	title="企業理念 | 八生建設株式会社"
+	description="理想をカタチに、未来を築く。八生建設の企業理念（MISSION／VISION／VALUE）と経営理念。"
+	bodyClass="wp-singular page-template-default page page-child"
+>
+	<Fragment set:html={content} />
+</Site>

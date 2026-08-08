@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/works/content.html?raw';
+---
+
+<Site
+	title="施工事例 | 八生建設株式会社"
+	description="八生建設のこれまでの建築実績一覧。"
+	bodyClass="archive post-type-archive post-type-archive-works"
+>
+	<Fragment set:html={content} />
+</Site>

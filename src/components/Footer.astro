@@ -1,62 +1,192 @@
 ---
-const today = new Date();
+import { COMPANY, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+
+const news = (await getCollection('news'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
+
+const fmt = (d: Date) =>
+	`${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 ---
 
-<footer>
-	&copy; {today.getFullYear()} Your name here. All rights reserved.
-	<div class="social-links">
-		<a href="https://m.webtoo.ls/@astro" target="_blank">
-			<span class="sr-only">Follow Astro on Mastodon</span>
-			<svg
-				viewBox="0 0 16 16"
-				aria-hidden="true"
-				width="32"
-				height="32"
-				astro-icon="social/mastodon"
-				><path
-					fill="currentColor"
-					d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"
-				></path></svg
-			>
-		</a>
-		<a href="https://twitter.com/astrodotbuild" target="_blank">
-			<span class="sr-only">Follow Astro on Twitter</span>
-			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/twitter"
-				><path
-					fill="currentColor"
-					d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
-				></path></svg
-			>
-		</a>
-		<a href="https://github.com/withastro/astro" target="_blank">
-			<span class="sr-only">Go to Astro's GitHub repo</span>
-			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/github"
-				><path
-					fill="currentColor"
-					d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-				></path></svg
-			>
-		</a>
+<section class="cta">
+	<div class="inner">
+		<p class="cta-lead">建築の大小関わらず<br />お気軽にご相談ください</p>
+		<a class="btn" href="/contact/">お問い合わせ</a>
+	</div>
+</section>
+
+<footer class="site-footer">
+	<div class="inner">
+		<div class="about">
+			<img class="footer-logo" src="/uploads/logo.svg" alt={SITE_TITLE} width="180" height="36" />
+			<h2>八生建設について</h2>
+			<p>
+				創業以来、建築施工管理で培った豊富な経験と高度な技術に加え、先を見据えたビジネスの研鑚を積み重ね、より良い生活環境の創造と、活力ある社会の発展に貢献してまいりました。
+			</p>
+			<p>
+				今後も建築のエキスパートとしての価値を高め、皆さまにご満足いただけるソリューションを提供できる企業として、さらなる発展を目指してまいります。
+			</p>
+		</div>
+
+		<nav class="sitemap" aria-label="フッターナビゲーション">
+			<ul>
+				<li><a href="/">トップページ</a></li>
+				<li><a href="/works/">施工事例一覧</a></li>
+				<li><a href="/company/">企業情報</a></li>
+				<li><a href="/recruit/">採用情報</a></li>
+				<li><a href="/information/">インフォメーション</a></li>
+				<li><a href="/contact/">お問い合わせ</a></li>
+				<li><a href="/entry/">エントリーフォーム</a></li>
+			</ul>
+		</nav>
+
+		<div class="latest">
+			<h2>新着情報</h2>
+			<ul>
+				{
+					news.map((post) => (
+						<li>
+							<a href={post.data.permalink}>
+								<time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+								<span>{post.data.title}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		<div class="contact">
+			<h2>お問い合わせ</h2>
+			<address>
+				{COMPANY.addressShort}<br />
+				TEL <a href={`tel:${COMPANY.tel.replace(/-/g, '')}`}>{COMPANY.tel}</a><br />
+				FAX {COMPANY.fax}
+			</address>
+		</div>
+	</div>
+
+	<div class="bottom">
+		<small>{COMPANY.copyright}</small>
+		<ul>
+			<li><a href="/privacy/">プライバシーポリシー</a></li>
+			<li><a href="/terms/">利用規約</a></li>
+		</ul>
 	</div>
 </footer>
+
 <style>
-	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
+	.cta {
+		background: #0a5c9e;
+		color: #fff;
 		text-align: center;
+		padding: 3rem 1.25rem;
 	}
-	.social-links {
-		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
+	.cta-lead {
+		margin: 0 0 1.5rem;
+		font-size: 1.35rem;
+		font-weight: 700;
+		line-height: 1.7;
 	}
-	.social-links a {
+	.btn {
+		display: inline-block;
+		padding: 0.85rem 3rem;
+		background: #fff;
+		color: #0a5c9e;
+		font-weight: 700;
 		text-decoration: none;
-		color: rgb(var(--gray));
+		border-radius: 999px;
 	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+	.btn:hover {
+		opacity: 0.85;
+	}
+
+	.site-footer {
+		background: #1a1a1a;
+		color: #ddd;
+		padding: 3.5rem 1.25rem 1.5rem;
+		font-size: 0.9rem;
+	}
+	.site-footer .inner {
+		display: grid;
+		grid-template-columns: 1.4fr 1fr 1.4fr 1fr;
+		gap: 2.5rem;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+	.footer-logo {
+		height: 36px;
+		width: auto;
+		margin-bottom: 1rem;
+		filter: brightness(0) invert(1);
+	}
+	.site-footer h2 {
+		margin: 0 0 0.85rem;
+		font-size: 1rem;
+		color: #fff;
+	}
+	.site-footer p {
+		margin: 0 0 0.85rem;
+		line-height: 1.9;
+	}
+	.site-footer ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.site-footer li {
+		margin-bottom: 0.6rem;
+	}
+	.site-footer a {
+		color: #ddd;
+		text-decoration: none;
+	}
+	.site-footer a:hover {
+		color: #fff;
+		text-decoration: underline;
+	}
+	.latest time {
+		display: block;
+		font-size: 0.78rem;
+		color: #999;
+	}
+	address {
+		font-style: normal;
+		line-height: 1.9;
+	}
+
+	.bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		max-width: 1200px;
+		margin: 2.5rem auto 0;
+		padding-top: 1.25rem;
+		border-top: 1px solid #333;
+	}
+	.bottom ul {
+		display: flex;
+		gap: 1.25rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.bottom li {
+		margin: 0;
+	}
+
+	@media (max-width: 900px) {
+		.site-footer .inner {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	@media (max-width: 600px) {
+		.site-footer .inner {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

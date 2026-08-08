@@ -16,42 +16,125 @@ media_folder: public/uploads
 public_folder: /uploads
 
 collections:
-  - name: blog
-    label: Blog
-    folder: src/content/blog
+  - name: news
+    label: インフォメーション
+    label_singular: お知らせ
+    folder: src/content/news
     create: true
     slug: "{{slug}}"
     extension: md
     format: frontmatter
+    sortable_fields: [pubDate, title]
     fields:
       - name: title
-        label: Title
+        label: タイトル
         widget: string
 
-      - name: description
-        label: Description
-        widget: text
-
       - name: pubDate
-        label: Publish Date
+        label: 公開日
         widget: datetime
         date_format: YYYY-MM-DD
         time_format: false
         format: YYYY-MM-DD
 
-      - name: updatedDate
-        label: Updated Date
-        widget: datetime
-        date_format: YYYY-MM-DD
-        time_format: false
-        format: YYYY-MM-DD
-        required: false
+      - name: category
+        label: カテゴリー
+        widget: select
+        options:
+          - おしらせ
+          - 採用情報
+          - 施工事例（Works）
+
+      - name: permalink
+        label: パーマリンク
+        widget: string
+        hint: "公開URL。例: /news/example-post/ （/news/ ・ /recruit/ ・ /work/ のいずれかで始めてください）"
+        pattern: ["^/(news|recruit|work)/[a-z0-9-]+/$", "/news/ ・ /recruit/ ・ /work/ のいずれかで始まり、末尾は / で終わる必要があります"]
 
       - name: heroImage
-        label: Hero Image
+        label: アイキャッチ画像
         widget: image
         required: false
 
       - name: body
-        label: Body
+        label: 本文
         widget: markdown
+
+  - name: works
+    label: 施工事例
+    label_singular: 施工事例
+    folder: src/content/works
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    sortable_fields: [order, completionDate, title]
+    fields:
+      - name: title
+        label: 物件名
+        widget: string
+
+      - name: classification
+        label: 用途分類
+        widget: select
+        options:
+          - オフィス
+          - 住宅施設
+          - カーディーラー
+          - 工場
+          - 倉庫
+          - 医療・福祉施設
+          - 文化・教育施設
+
+      - name: location
+        label: 所在地
+        widget: string
+        hint: "例: 埼玉県"
+
+      - name: locationEn
+        label: 所在地（英字・一覧カード用）
+        widget: string
+        hint: "例: Saitama / Tokyo"
+
+      - name: structure
+        label: 構造
+        widget: string
+        hint: "例: S造 4階"
+
+      - name: scale
+        label: 規模
+        widget: string
+        hint: "例: （延べ床面積）659㎡"
+
+      - name: completion
+        label: 竣工（表示用）
+        widget: string
+        hint: "例: 2011年06月"
+
+      - name: completionDate
+        label: 竣工日（並び替え用）
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+
+      - name: order
+        label: 表示順
+        widget: number
+        value_type: int
+        default: 99
+        hint: "一覧ページでの並び順。小さいほど先頭に表示されます。"
+
+      - name: images
+        label: 写真
+        widget: list
+        field:
+          name: image
+          label: 画像
+          widget: image
+        hint: "1枚目が一覧ページのサムネイルになります。"
+
+      - name: body
+        label: 補足（任意）
+        widget: markdown
+        required: false

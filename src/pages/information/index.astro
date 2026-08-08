@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/information/content.html?raw';
+---
+
+<Site
+	title="インフォメーション | 八生建設株式会社"
+	description="八生建設からのおしらせ・採用情報・施工事例に関する最新情報。"
+	bodyClass="blog wp-singular page-template-default page"
+>
+	<Fragment set:html={content} />
+</Site>

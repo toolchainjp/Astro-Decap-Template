@@ -1,0 +1,12 @@
+---
+import Site from '../../layouts/Site.astro';
+import content from '../../fragments/company/content.html?raw';
+---
+
+<Site
+	title="企業情報 | 八生建設株式会社"
+	description="八生建設株式会社の企業情報。企業理念・会社概要をご覧いただけます。"
+	bodyClass="wp-singular page-template-default page page-child"
+>
+	<Fragment set:html={content} />
+</Site>
